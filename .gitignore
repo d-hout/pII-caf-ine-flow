@@ -1,3 +1,37 @@
+# node
 node_modules/
+**/node_modules/
+
+# environment
 .env
+.env.local
+.env.*.local
+
+# build outputs
 dist/
+build/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS
+.DS_Store
+
+# editor directories and files
+.vscode/
+.idea/
+
+# coverage
+coverage/
+
+# generated
+.cache/
+
+# local npm cache
+*.tgz
+
+# system files
+.npmrc
+.yarnrc

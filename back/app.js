@@ -7,30 +7,29 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Co à la BDD
+// connexion à la BDD
 mongoose.connect('mongodb://127.0.0.1:27017/caffeineflow')
-  .then(() => console.log(" MongoDB Connecté"))
-  .catch(err => console.log(" Erreur ", err));
+  .then(() => console.log("connecté"))
+  .catch(err => console.log("Erreur connexion", err));
 
-
-const User = mongoose.model('User', new mongoose.Schema({
+const Utilisateur = mongoose.model('Utilisateur', new mongoose.Schema({
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  profileConfigured: { type: Boolean, default: false },
-  resetToken: String,
-  resetExpires: Date,
+  motDePasse: { type: String, required: true },
+  questionSecrete: String,
+  reponseSecrete: String,
+  profilConfigure: { type: Boolean, default: false },
   hCoucher: String,
   demiVie: Number,
-  Fumeur: Boolean,
-  Contraceptif: Boolean,
-  Palpitations: Boolean,
-  Nervosité: Boolean
+  fumeur: Boolean,
+  contraceptif: Boolean,
+  palpitations: Boolean,
+  nervosite: Boolean
 }));
 
-const Drink = mongoose.model('Drink', new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  name: String,
-  cafeineAmount: Number,
+const Consommation = mongoose.model('Consommation', new mongoose.Schema({
+  idUtilisateur: { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur', required: true },
+  nomBoisson: String,
+  quantiteCafeine: Number,
   date: { type: Date, default: Date.now }
 }));
 
@@ -38,10 +37,15 @@ const Drink = mongoose.model('Drink', new mongoose.Schema({
 // Inscription
 app.post('/api/register', async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const newUser = new User({ email: req.body.email, password: hashedPassword });
-    await newUser.save();
-    res.status(201).json({ message: "Compte créé ! 🎉", userId: newUser._id });
+    const motDePasseHashe = await bcrypt.hash(req.body.password || req.body.motDePasse, 10);
+    const nouvelUtilisateur = new Utilisateur({ 
+      email: req.body.email, 
+      motDePasse: motDePasseHashe,
+      questionSecrete: req.body.questionSecrete,
+      reponseSecrete: req.body.reponseSecrete 
+    });
+    await nouvelUtilisateur.save();
+    res.status(201).json({ userId: nouvelUtilisateur._id });
   } catch (error) {
     res.status(400).json({ message: "Cet email est déjà utilisé" });
   }
@@ -49,126 +53,53 @@ app.post('/api/register', async (req, res) => {
 
 // Connexion
 app.post('/api/login', async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
-    if (user && await bcrypt.compare(req.body.password, user.password)) {
-      res.json({ message: "Bienvenue", userId: user._id });
-    } else {
-      res.status(401).json({ message: "Email ou mot de passe incorrect." });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur" });
+  const utilisateur = await Utilisateur.findOne({ email: req.body.email });
+  if (utilisateur && await bcrypt.compare(req.body.password || req.body.motDePasse, utilisateur.motDePasse)) {
+    res.json({ userId: utilisateur._id });
+  } else {
+    res.status(401).json({ message: "Email ou mot de passe incorrect." });
   }
 });
 
-// Request password reset (generates a token and (in prod) would email it)
-app.post('/api/request-reset', async (req, res) => {
-  try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
 
-    // Simple token generation (for demo). In production use a secure random token and email it.
-    const token = Math.random().toString(36).slice(2, 12);
-    user.resetToken = token;
-    user.resetExpires = Date.now() + 1000 * 60 * 60; // 1 hour
-    await user.save();
-
-    console.log(`Reset token for ${email}: ${token}`); // for dev
-    // Return token in response for local/dev usage so frontend can continue the flow.
-    res.json({ message: 'Token généré (en dev retourné dans la réponse)', token });
-  } catch (err) {
-    console.error('Erreur request-reset', err);
-    res.status(500).json({ message: 'Erreur serveur' });
+// 1. Récupérer la question d'un utilisateur
+app.get('/api/get-question/:email', async (req, res) => {
+  const utilisateur = await Utilisateur.findOne({ email: req.params.email });
+  if (utilisateur) {
+    res.json({ question: utilisateur.questionSecrete });
+  } else {
+    res.status(404).json({ message: "Utilisateur non trouvé" });
   }
 });
 
-// reinitialisation du mdp
-app.post('/api/reset-password', async (req, res) => {
-  try {
-    const { token, newPassword } = req.body;
-    if (!token || !newPassword) return res.status(400).json({ message: 'Données manquantes' });
 
-    const user = await User.findOne({ resetToken: token, resetExpires: { $gt: Date.now() } });
-    if (!user) return res.status(400).json({ message: 'Token invalide ou expiré' });
 
-    const hashed = await bcrypt.hash(newPassword, 10);
-    user.password = hashed;
-    user.resetToken = undefined;
-    user.resetExpires = undefined;
-    await user.save();
-
-    res.json({ message: 'Mot de passe réinitialisé avec succès' });
-  } catch (err) {
-    console.error('Erreur reset-password', err);
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
-
-// Profil verif
+// Verif profil
 app.get('/api/check-profile/:userId', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    res.json({ profileConfigured: user ? user.profileConfigured : false });
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
+  const user = await Utilisateur.findById(req.params.userId);
+  res.json({ profileConfigured: user ? user.profilConfigure : false });
 });
 
-// Retourner les données de profil d'un utilisateur (sans le mot de passe)
-app.get('/api/get-user/:userId', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId).lean();
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
-    delete user.password;
-    res.json({ user });
-  } catch (err) {
-    console.error('Erreur get-user', err);
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
-
-// Profil maj
+// Maj profil
 app.post('/api/update-profile', async (req, res) => {
   const { userId, ...profileData } = req.body;
-  if (!userId) return res.status(400).json({ message: "ID utilisateur manquant" });
-
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      userId, 
-      { ...profileData, profileConfigured: true }, 
-      { returnDocument: 'after' } // Correction ici pour éviter le warning
-    );
-    if (!updatedUser) return res.status(404).json({ message: "Utilisateur introuvable" });
-    res.json({ message: "Profil sauvegardé avec succès !", user: updatedUser });
-  } catch (err) {
-    console.error("Erreur Mongoose :", err);
-    res.status(500).json({ message: "Erreur serveur lors de la sauvegarde" });
-  }
+  await Utilisateur.findByIdAndUpdate(userId, { ...profileData, profilConfigure: true });
+  res.json({ message: "Profil sauvegardé !" });
 });
 
-// Boissons ajt
+// Ajout boisson
 app.post('/api/add-drink', async (req, res) => {
-  try {
-    const { userId, name, cafeineAmount } = req.body;
-    const newDrink = new Drink({ userId, name, cafeineAmount });
-    await newDrink.save();
-    res.status(201).json({ message: " conso ajoutée !", drink: newDrink });
-  } catch (err) {
-    console.error("Erreur ajout boisson :", err);
-    res.status(500).json({ message: "Erreur lors de l'ajout" });
-  }
+  const { idUtilisateur, nomBoisson, quantiteCafeine } = req.body;
+  const nouvelleConso = new Consommation({ idUtilisateur, nomBoisson, quantiteCafeine });
+  await nouvelleConso.save();
+  res.status(201).json({ message: "Conso ajoutée !" });
 });
 
-// Boissons recup conso utilisateurs
+// Récup boissons
 app.get('/api/drinks/:userId', async (req, res) => {
-  try {
-    const drinks = await Drink.find({ userId: req.params.userId }).sort({ date: -1 }).lean();
-    res.json({ drinks });
-  } catch (err) {
-    console.error('Erreur récupération boissons :', err);
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
+  const drinks = await Consommation.find({ idUtilisateur: req.params.userId }).sort({ date: -1 });
+
+  res.json({ drinks }); 
 });
 
-app.listen(5050, () => console.log(" Port 5050"));
+app.listen(5050, () => console.log(" Serveur port 5050"));

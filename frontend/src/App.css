@@ -2,7 +2,7 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 1rem;
-  text-align: left; /* align content to the left for a dashboard layout */
+  text-align: left;
 }
 @keyframes logo-spin {
   from {
@@ -19,15 +19,15 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #44312a; /* deep coffee text */
-  background: linear-gradient(180deg, #fff8f2 0%, #fff1e6 100%); /* light warm cream */
+  color: #44312a;
+  background: linear-gradient(180deg, #fff8f2 0%, #fff1e6 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
- 
+
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
@@ -37,7 +37,6 @@
 
 .card {
   padding: 2em;
-  /* Cards on light background: white with soft shadow */
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(16,24,40,0.06);
@@ -46,11 +45,10 @@
   color: #213547;
 }
 
-/* Auth / Login page styles */
 .auth-page { max-width:1100px; margin: 24px auto; padding: 0 18px }
-.auth-container { display:flex; gap:40px; align-items:flex-start; justify-content:flex-start; /* align form to the left so it doesn't take the whole page; right column remains for future content */ }
+.auth-container { display:flex; gap:40px; align-items:flex-start; justify-content:flex-start; }
 .auth-card {
-  width: 480px; /* fixed card width so it doesn't take the whole page */
+  width: 480px;
   padding: 36px;
   border-radius: 14px;
   box-shadow: 0 18px 50px rgba(16,24,40,0.08);
@@ -68,7 +66,6 @@
 .auth-link { color:#7b82ff; background:none; padding:6px 8px }
 .auth-message { color:#d23; margin-left:12px }
 
-/* make sure inputs and buttons look good on smaller screens */
 @media (max-width: 900px) {
   .auth-card { padding: 20px; width: 100% }
   .chart-placeholder { height: 220px }
@@ -82,7 +79,6 @@
   color: #888;
 }
 
-/* Header */
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -96,10 +92,9 @@
 .app-title { margin:0; font-size:1.6rem; font-weight:700; color:#44312a }
 .header-sub { color: #bdbdbd; font-size:0.9rem }
 
-/* Top navigation banner (responsive) */
 .top-nav {
   display: flex;
-  justify-content: center; /* center the inner container */
+  justify-content: center;
   align-items: center;
   gap: 12px;
   padding: 10px 0;
@@ -125,17 +120,14 @@
   .top-nav .tab { padding: 6px 8px; font-size: 0.95rem }
 }
 
-/* Tabs */
 .tabs { display:flex; gap:10px; max-width:1100px; margin: 0 auto 18px }
 .tab { padding:8px 12px; border-radius:10px; background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.02); color:#cfcfff }
 .tab.active { background: linear-gradient(90deg,#6a6cff22,#5756f222); color:#2b2b2b }
 
-/* Chart area */
 .chart-card { max-width:1100px; margin: 24px auto 28px }
 .chart-placeholder { height: 320px; display:flex; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(210,110,30,0.04), rgba(210,110,30,0.01)); border-radius:10px; margin-top:18px }
 .chart-empty { color:#bdbdbd }
 
-/* Calendar styles to look like tiles/cards */
 .react-calendar { border: none; font-family: inherit }
 .react-calendar__navigation { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
 .react-calendar__navigation button { background: none; border: 1px solid rgba(68,49,42,0.06); padding:8px 12px; border-radius:8px }
@@ -145,8 +137,8 @@
   padding: 12px !important;
   border-radius: 12px !important;
   box-shadow: none !important;
-  border: none !important; /* remove default box border */
-  background: transparent !important; /* remove white background so tiles look like part of the page */
+  border: none !important;
+  background: transparent !important;
 }
 .react-calendar__tile--now { outline: none }
 .react-calendar__tile:empty { background: transparent; border: none }
@@ -156,23 +148,20 @@
 .day-count { font-weight:700; color:#3a231f }
 .day-total { color:#6b6b7b; font-size:0.85rem }
 
-.day-low { border: 2px solid #9fd7b8 !important } /* green */
-.day-medium { border: 2px solid #f4a261 !important } /* orange */
-.day-high { border: 2px solid #ffd166 !important; background: #fff8e6 !important } /* yellow */
+.day-low { border: 2px solid #9fd7b8 !important }
+.day-medium { border: 2px solid #f4a261 !important }
+.day-high { border: 2px solid #ffd166 !important; background: #fff8e6 !important }
 
 .react-calendar__tile--active { background: #fff7d6 !important; border-color: #f4d57a !important }
 
-/* Calendar column/wrapper layout */
 .calendar-full { width: 100%; max-width: 1100px; margin: 0 auto }
 .calendar-wrapper { display:flex; justify-content:center; width:100% }
 
 .react-calendar { border: none; box-shadow: none; width: 100%; background: transparent }
 
-/* Calendar nav (month + arrows) used by our custom grid */
 .calendar-nav .btn-outline { padding: 6px 10px }
 .calendar-nav div { color: #44312a }
 
-/* calendar-grid: we render weekdays + day cards in a 7-column grid */
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 6px }
 .calendar-grid > div { min-height: 48px }
 .day-card { aspect-ratio: 1; padding: 6px; border: 1px solid #eee; border-radius: 6px; display:flex; flex-direction:column; justify-content:center; align-items:center; background: #fff }
@@ -181,23 +170,19 @@
 .day-number { font-size: 0.95rem }
 
 
-/* Two-column layout */
 .two-col { display:flex; gap:28px; max-width:1100px; margin: 22px auto; align-items:flex-start }
 .two-col .add-card { flex-basis:48% }
 .two-col .history-card { flex-basis:48% }
 
-/* small utilities */
 .muted { color: #6b6b7b }
 .field { display:block; margin:12px 0 }
 .label { font-size:0.9rem; color:#d0d0d0; margin-bottom:6px }
 .input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e6e6ea; background:#ffffff; color:#213547 }
 
-/* Buttons and pills */
 .btn { border-radius:10px; border: none; color: white; padding: 0.8em 1em; cursor: pointer }
 .btn-primary { background: linear-gradient(180deg,#d2691e,#8b4513); box-shadow: 0 6px 18px rgba(139,69,19,0.12) }
 .btn-danger { background: linear-gradient(180deg,#ff6b6b,#ff3b3b) }
 .btn-outline { background: none; color: #8b4b2b; border:1px solid rgba(139,69,19,0.12); padding:8px 12px; border-radius:8px }
-/* Ensure logout button text doesn't wrap */
 .top-nav-right .btn-outline { white-space: nowrap; display: inline-flex; align-items: center }
 .btn-link { background:none; color:#c67a4a; border:none }
 .btn-icon { background:none; border:none; color:#ff6b6b; margin-left:12px }
@@ -210,9 +195,8 @@
 
 .tip { margin-top:12px; padding:12px; border-radius:8px; background: linear-gradient(180deg,#fff8f2,#fff3ea); border:1px solid rgba(139,69,19,0.06); color:#6b6b7b }
 
-/* Smaller, softer quantity input and button for AjoutConso */
 .quantity-input {
-  background: #f5f6fb; /* light neutral background instead of dark */
+  background: #f5f6fb;
   border: 1px solid #e6e6ea;
   color: #213547;
   padding: 8px 10px;
@@ -220,7 +204,6 @@
   max-width: 180px;
 }
 
-/* Quick-pick pills row in AjoutConso */
 .quick-picks { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px }
 .quick-picks .pill { cursor: pointer; background: linear-gradient(180deg,#fff7f0,#fff3ec); color:#6b3f2b; border:1px solid rgba(139,69,19,0.06); padding:6px 10px }
 
@@ -228,7 +211,7 @@
   padding: 8px 12px;
   font-size: 0.95rem;
   border-radius: 8px;
-  box-shadow: none; /* remove large shadow */
+  box-shadow: none;
 }
 
 .btn-sm.btn-primary {
@@ -236,7 +219,6 @@
   box-shadow: 0 4px 10px rgba(139,69,19,0.08);
 }
 
-/* Global brand shown in top-left of the page */
 .global-brand {
   position: fixed;
   left: 20px;
@@ -277,3 +259,110 @@
   margin-bottom: 5px;
   border-radius: 4px;
 }
+
+.carte-consommation {
+  padding: 2em;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(16,24,40,0.06);
+  max-width: 100%;
+  margin: 1.25rem 0;
+  color: #213547;
+}
+
+.champ-boisson {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6e6ea;
+  background: #ffffff;
+  color: #213547;
+}
+
+.champ-quantite {
+  background: #f5f6fb;
+  border: 1px solid #e6e6ea;
+  color: #213547;
+  padding: 8px 10px;
+  border-radius: 8px;
+  max-width: 180px;
+}
+
+.texte-discret { color: #6b6b7b }
+
+.bouton-ajouter {
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(180deg,#d2691e,#8b4513);
+  box-shadow: 0 4px 10px rgba(139,69,19,0.08);
+  border: none;
+}
+
+.carte { 
+  padding: 2em;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(16,24,40,0.06);
+  max-width: 100%;
+  margin: 1.25rem 0;
+  color: #213547;
+}
+
+.conteneur-auth { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; padding:24px; background: transparent; gap:18px }
+
+.conteneur-auth .carte { width:520px; max-width:calc(100% - 48px); padding:28px; border-radius:14px; box-shadow:0 24px 60px rgba(16,24,40,0.12); background:linear-gradient(180deg,#ffffff,#fbfbfd) }
+.conteneur-auth .titre-appli { font-size:1.4rem; margin:0; color:#44312a; text-align:center; width:100% }
+
+.conteneur-auth .carte form { display:flex; flex-direction:column; gap:12px }
+.conteneur-auth .carte h2 { margin: 0 0 8px 0; font-size:1.5rem }
+.conteneur-auth .carte .auth-actions { margin-top: 8px }
+
+.champ { width:100%; padding:12px 14px; border-radius:10px; border:1px solid #e6e6ea; background:#ffffff; color:#213547; box-sizing:border-box; transition: box-shadow 160ms ease, border-color 160ms ease }
+.champ:focus { outline:none; box-shadow:0 6px 20px rgba(139,69,19,0.06); border-color:#d69a6e }
+
+.conteneur-auth .bouton-primaire { width:100%; padding:12px 14px; border-radius:10px; font-weight:700; transition: transform 120ms ease, box-shadow 120ms ease }
+.conteneur-auth .bouton-primaire:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(139,69,19,0.12) }
+.conteneur-auth .bouton-lien { background:none; color:#8b4b2b; padding:6px 8px; border:none }
+.conteneur-auth .auth-actions { display:flex; gap:12px; margin-top:12px; align-items:center }
+.conteneur-auth .texte-erreur { margin-top:12px }
+
+.bouton { border-radius:10px; border: none; color: white; padding: 0.8em 1em; cursor: pointer }
+.bouton-primaire { background: linear-gradient(180deg,#d2691e,#8b4513); box-shadow: 0 6px 18px rgba(139,69,19,0.12) }
+.bouton-danger { background: linear-gradient(180deg,#ff6b6b,#ff3b3b) }
+.bouton-contour { background: none; color: #8b4b2b; border:1px solid rgba(139,69,19,0.12); padding:8px 12px; border-radius:8px }
+.bouton-lien { background:none; color:#c67a4a; border:none }
+
+.texte-erreur { color:#d23 }
+
+
+.grille-calendrier { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 6px }
+.case-jour { aspect-ratio: 1; padding: 6px; border: 1px solid #eee; border-radius: 6px; display:flex; flex-direction:column; justify-content:center; align-items:center; background: #fff }
+.case-jour.active { box-shadow: 0 6px 14px rgba(68,49,42,0.035) }
+.case-jour.danger { background: #fff6f4; border-color: #ffd6d6 }
+
+.carte-historique { display:block; background: linear-gradient(180deg,#ffffff,#fbfbfd); padding:12px; border-radius:10px; margin-bottom:10px; border:1px solid #eef0f6 }
+.element-historique { display:flex; justify-content:space-between; align-items:center; background: linear-gradient(180deg,#ffffff,#fbfbfd); padding:12px; border-radius:10px; margin-bottom:10px; border:1px solid #eef0f6 }
+.historique-gauche { display:flex; gap:12px; align-items:center }
+.historique-droite { display:flex; align-items:center }
+.titre-historique { font-weight:600 }
+.pastille { background: rgba(210,110,30,0.08); color:#d2691e; padding:6px 10px; border-radius:999px; font-weight:600 }
+
+.carte-graphique { max-width:1100px; margin: 24px auto 28px }
+.espace-graphique { height: 320px; display:flex; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(210,110,30,0.04), rgba(210,110,30,0.01)); border-radius:10px; margin-top:18px }
+.graphique-vide { color:#bdbdbd }
+
+.barre-nav { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 10px 0; background: linear-gradient(180deg, #fff8f2, #fff3ea); border-bottom: 1px solid rgba(68,49,42,0.06); position: sticky; top: 0; z-index: 50; max-width: 100%; }
+.barre-nav-interne { max-width: 1200px; margin: 0 auto; padding: 0 24px; display:flex; align-items:center; gap:20px }
+.barre-nav-gauche { display:flex; align-items:center; gap:12px }
+.badge-logo { width:auto; height:auto; background: none; color: #44312a; display:flex; align-items:center; justify-content:center; border-radius:0; font-size:22px; padding: 0; box-shadow: none }
+.titre-appli { margin:0; font-size:1.6rem; font-weight:700; color:#44312a }
+.barre-nav-centre { display:flex; gap:20px; margin-left: 40px; margin-right: auto }
+.onglet { padding: 10px 18px; border-radius:12px; background: none; border: none; color: #5b3e35; cursor: pointer; font-weight:600 }
+.onglet:hover { background: rgba(210,110,30,0.06) }
+.barre-nav-centre .onglet.active { background: linear-gradient(90deg,#d2691e22,#8b451322); color:#3a231f; box-shadow: 0 6px 18px rgba(139,69,19,0.08) }
+
+
+

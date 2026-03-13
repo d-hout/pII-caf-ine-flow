@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function Questionnaire({ onSave }) {
   const [profile, setProfile] = useState({
-    hCoucher: '23:00',
+    hCoucher: '',
     Fumeur: false,
     Contraceptif: false,
     Palpitations: false,
@@ -11,7 +11,7 @@ export default function Questionnaire({ onSave }) {
   const [message, setMessage] = useState('');
   const [chargement, setChargement] = useState(true)
 
-  // Charger le profil sauvegardé depuis le backend pour préremplir le questionnaire
+  // charger le profil sauvegardé depuis le backend
   useEffect(() => {
     const chargerProfil = async () => {
       const userId = localStorage.getItem('userId')
@@ -74,7 +74,7 @@ export default function Questionnaire({ onSave }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
-          hCoucher: profile.hCoucher, // Ces noms doivent correspondre au schéma
+          hCoucher: profile.hCoucher, 
           demiVie: personalizedHalfLife,
           Fumeur: profile.Fumeur,
           Contraceptif: profile.Contraceptif,
@@ -97,19 +97,18 @@ export default function Questionnaire({ onSave }) {
   };
 
   if (chargement) return (
-    <div className="card">
-      <h3>Questionnaire rapide</h3>
-      <div>Chargement...</div>
+  <div className="carte">
+      <h3>Questionnaire </h3>
     </div>
   )
 
   return (
-    <div className="card">
-      <h3>Questionnaire rapide</h3>
+  <div className="carte">
+      <h3>Questionnaire </h3>
       <form onSubmit={envoyerQuestionnaire} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <label>
           Heure habituelle du coucher
-          <input type="time" value={profile.hCoucher} onChange={e => changerProfil('hCoucher', e.target.value)} className="input" />
+          <input type="time" value={profile.hCoucher} onChange={e => changerProfil('hCoucher', e.target.value)} className="champ" />
         </label>
 
         <label>
@@ -133,8 +132,8 @@ export default function Questionnaire({ onSave }) {
         </label>
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-primary" type="submit">Sauvegarder</button>
-          <button type="button" className="btn btn-outline" onClick={() => setMessage('')}>Annuler</button>
+          <button className="bouton bouton-primaire" type="submit">Sauvegarder</button>
+          <button type="button" className="bouton bouton-contour" onClick={() => setMessage('')}>Annuler</button>
         </div>
       </form>
       {message && <p style={{ marginTop: 12 }}>{message}</p>}

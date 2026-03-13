@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react'
 
-function HistoryItem({ title, time, mg }) {
+function ItemHistorique({ title, time, mg }) {
   return (
-    <div className="history-item">
-      <div className="history-left">
+    <div className="element-historique">
+      <div className="historique-gauche">
         <div>
-          <div className="history-title">{title}</div>
-          <div className="muted">{time}</div>
+          <div className="titre-historique">{title}</div>
+          <div className="texte-discret">{time}</div>
         </div>
       </div>
-      <div className="history-right">
-        <span className="pill">{mg} mg</span>
+      <div className="historique-droite">
+        <span className="pastille">{mg} mg</span>
       </div>
     </div>
   )
 }
 
-export default function HistoryList() {
+export default function Historique() {
   const [consos, setConsos] = useState([])
   const [chargement, setChargement] = useState(true)
   const [erreur, setErreur] = useState(null)
@@ -35,6 +35,7 @@ export default function HistoryList() {
       const res = await fetch(`http://localhost:5050/api/drinks/${userId}`)
       const text = await res.text()
       setDernierRetour(text)
+  // tableau des conso récupérées depuis l'API
       if (!res.ok) {
         setErreur(`HTTP ${res.status}`)
         setConsos([])
@@ -60,9 +61,9 @@ export default function HistoryList() {
   }, [])
 
   return (
-    <aside className="history-card card">
+    <aside className="carte-historique carte" style={{ width: '100%', minWidth: '350px' }}>
       <h3>Historique du jour</h3>
-  <div className="muted">{chargement ? 'Chargement...' : `${consos.length} consommations enregistrées`}</div>
+      <div className="texte-discret">{chargement ? 'Chargement...' : `${consos.length} consommations enregistrées`}</div>
       <div style={{ marginTop: 8 }}>
         {erreur && <div style={{ marginTop: 8, color: '#d23' }}>Erreur : {erreur}</div>}
         {!erreur && dernierRetour && !chargement && (
@@ -73,10 +74,10 @@ export default function HistoryList() {
       </div>
       <div style={{ marginTop: '16px' }}>
         {consos.length === 0 && !chargement && (
-          <div className="muted">Aucune consommation enregistrée</div>
+          <div className="texte-discret">Aucune consommation enregistrée</div>
         )}
         {consos.map(d => (
-          <HistoryItem
+          <ItemHistorique
             key={d._id}
             title={d.name}
             time={new Date(d.date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}

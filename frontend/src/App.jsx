@@ -1,222 +1,142 @@
-import { useState, useEffect } from 'react'
-
+import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 import './App.css'
 
 import Navbar from './components/Navbar'
 import Calendrier from './components/Calendrier'
-import ChartCard from './components/ChartCard'
-import AddConsumption from './components/AjoutConso'
-import HistoryList from './components/HistoryList'
-import Questionnaire from './components/Questionnaire' 
+import Graphique from './components/Graphique'
+import AjoutConso from './components/AjoutConso'
+import Historique from './components/Historique'
+import Questionnaire from './components/Questionnaire'
 
-function AuthForm() {
+function Authentification() {
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLogin, setIsLogin] = useState(true)
+  const [motDePasse, setMotDePasse] = useState('')
+  const [question, setQuestion] = useState('')
+  const [reponse, setReponse] = useState('')
+  
+  const [estConnexion, setEstConnexion] = useState(true)
   const [message, setMessage] = useState('')
-  const [chargement, setChargement] = useState(false)
-  const [showReset, setShowReset] = useState(false)
-  const [resetEmail, setResetEmail] = useState('')
-  const [resetMessage, setResetMessage] = useState('')
-  const [resetToken, setResetToken] = useState('')
-  const [newPassword, setNewPassword] = useState('')
+  const [vueRecuperation, setVueRecuperation] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e) => {
+  //inscription/connexion
+  const gererSoumission = async (e) => {
     e.preventDefault()
-  setMessage('')
-  setChargement(true)
+    const url = estConnexion ? 'http://localhost:5050/api/login' : 'http://localhost:5050/api/register'
+    const corps = estConnexion
+      ? { email, password: motDePasse }
+      : { email, password: motDePasse, questionSecrete: question, reponseSecrete: reponse }
+
     try {
-      const endpoint = isLogin ? 'http://localhost:5050/api/login' : 'http://localhost:5050/api/register'
-      const res = await fetch(endpoint, {
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify(corps)
       })
       const data = await res.json()
-      if (!res.ok) {
-        setMessage(data.message || 'Erreur')
+      
+      if (res.ok) {
+        // on stocke l'id attendu par le backend et par les autres composants
+        localStorage.setItem('userId', data.userId || data.idUtilisateur)
+  navigate('/accueil')
       } else {
-        if (data.userId) localStorage.setItem('userId', data.userId) // On stocke l'ID
-        setTimeout(() => navigate('/dashboard'), 400)
+        setMessage(data.message)
       }
-    } catch (err) {
-      console.error('AuthForm submit error', err)
-      setMessage('Impossible de contacter le serveur')
-    } finally {
-      setChargement(false)
-    }
+    } catch (err) { setMessage('Erreur serveur') }
   }
 
-  return (
-    <div className="auth-page">
-      <div style={{ textAlign: 'center', marginBottom: 12 }}>
-        <div className="app-title">Caffeine Flow</div>
-      </div>
-      <div className="auth-container">
-        <div className="card auth-card">
-          <h2>{isLogin ? 'Connexion' : 'Inscription'}</h2>
-          <form onSubmit={handleSubmit} className="auth-form"> {/* CETTE CLASSE EST CRUCIALE */}
-            <input type="email" className="input auth-input" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-            <input type="password" className="input auth-input" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)} required />
-            <button type="submit" className="btn btn-primary auth-submit">{chargement ? '...' : (isLogin ? 'Se connecter' : "S'inscrire")}</button>
-          </form>
+  const gererRecuperation = async (e) => {
+    if (e && e.preventDefault) e.preventDefault()
+    setMessage('à faire')
+    setTimeout(() => setMessage(''), 4500)
+    setVueRecuperation(false)
+  }
 
-          {/* Password reset flow */}
-          {!showReset && (
-            <div style={{ marginTop: 12 }}>
-              <button type="button" className="btn btn-link auth-link" onClick={() => { setShowReset(true); setResetMessage('') }}>
-                Mot de passe oublié ?
-              </button>
-            </div>
-          )}
-          {showReset && (
-            <div style={{ marginTop: 12 }}>
-              <div style={{ marginBottom: 8 }}>
-                <input type="email" className="input auth-input" placeholder="Email pour réinitialisation" value={resetEmail} onChange={e => setResetEmail(e.target.value)} />
-              </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={async () => {
-                    setResetMessage('')
-                    try {
-                      const res = await fetch('http://localhost:5050/api/request-reset', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: resetEmail })
-                      })
-                      const data = await res.json()
-                      if (!res.ok) {
-                        setResetMessage(data.message || 'Erreur')
-                      } else {
-                        // In dev we receive token in response
-                        setResetMessage('Token envoyé (dev) — copie le code ci-dessous et colle-le pour réinitialiser :')
-                        setResetToken(data.token || '')
-                      }
-                    } catch (err) {
-                      console.error('Request reset error', err)
-                      setResetMessage('Impossible de contacter le serveur')
-                    }
-                  }}
-                >
-                  Envoyer
-                </button>
-                <button type="button" className="btn btn-link auth-link" onClick={() => setShowReset(false)}>Annuler</button>
-              </div>
-
-              {resetMessage && <p style={{ marginTop: 10 }}>{resetMessage}</p>}
-
-              {resetToken && (
-                <div style={{ marginTop: 12 }}>
-                  <div style={{ marginBottom: 8 }}>
-                    <input className="input" placeholder="Code reçu" value={resetToken} onChange={e => setResetToken(e.target.value)} />
-                  </div>
-                  <div style={{ marginBottom: 8 }}>
-                    <input type="password" className="input" placeholder="Nouveau mot de passe" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
-                  </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button type="button" className="btn btn-primary" onClick={async () => {
-                      try {
-                        const res = await fetch('http://localhost:5050/api/reset-password', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ token: resetToken, newPassword })
-                        })
-                        const data = await res.json()
-                        if (!res.ok) {
-                          setResetMessage(data.message || 'Erreur')
-                        } else {
-                          setResetMessage('Mot de passe réinitialisé — tu peux maintenant te connecter')
-                          setShowReset(false)
-                        }
-                      } catch (err) {
-                        console.error('Apply reset error', err)
-                        setResetMessage('Impossible de contacter le serveur')
-                      }
-                    }}>Appliquer le nouveau mot de passe</button>
-                    <button type="button" className="btn btn-link auth-link" onClick={() => { setResetToken(''); setNewPassword('') }}>Effacer</button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+  if (vueRecuperation) {
+    return (
+      <div className="conteneur-auth">
+        <div className="carte">
+          <h2>Récupération</h2>
+          <p>La réinitialisation de mot de passe est désactivée pour le moment. Vous pouvez contacter l'administrateur ou réessayer plus tard.</p>
           <div style={{ marginTop: 12 }}>
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="btn btn-link auth-link"
-            >
-              {isLogin ? "Pas de compte ? S'inscrire" : "Déjà un compte ? Connexion"}
-            </button>
-            {message && <p className="auth-message" style={{ marginTop: 8 }}>{message}</p>}
+            <button className="bouton bouton-lien" onClick={() => setVueRecuperation(false)}>Retour</button>
           </div>
         </div>
-
-        <aside className="auth-side">
-        </aside>
-      </div>
-    </div>
-  )
-}
-
-
-
-function Dashboard() {
-  const [profilConfigure, setProfilConfigure] = useState(false)
-  const [chargement, setChargement] = useState(true)
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const verifierProfil = async () => {
-      const userId = localStorage.getItem('userId')
-      if (!userId) {
-        // Pas d'utilisateur, renvoyer à la page de connexion
-        setChargement(false)
-        navigate('/')
-        return
-      }
-
-      try {
-        const res = await fetch(`http://localhost:5050/api/check-profile/${userId}`)
-        if (!res.ok) {
-          setProfilConfigure(false)
-        } else {
-          const data = await res.json()
-          setProfilConfigure(!!data.profileConfigured)
-        }
-      } catch (err) {
-        console.error('Erreur check-profile', err)
-        setProfilConfigure(false)
-      } finally {
-        setChargement(false)
-      }
-    }
-
-    verifierProfil()
-  }, [navigate])
-
-  if (chargement) return <div>Chargement...</div>
-
-  if (!profilConfigure) {
-    return (
-      <div className="dashboard-page">
-          <Navbar showDate={false} />
-        <Questionnaire onSave={() => setProfilConfigure(true)} />
       </div>
     )
   }
 
   return (
-    <div className="dashboard-page">
-        <Navbar showDate={false} />
-      <ChartCard />
-      <div className="two-col">
-        <AddConsumption />
-        <HistoryList />
+    <div className="conteneur-auth">
+      <div className="titre-appli">Caffeine Flow</div>
+      <div className="carte">
+        <h2>{estConnexion ? 'Connexion' : 'Inscription'}</h2>
+        <form onSubmit={gererSoumission}>
+          <input className="champ" type="email" placeholder="Email" onChange={e => setEmail(e.target.value)} required />
+          <input className="champ" type="password" placeholder="Mot de passe" onChange={e => setMotDePasse(e.target.value)} required />
+          
+          {!estConnexion && (
+            <>
+              <input className="champ" placeholder="Question secrète (ex: Nom de mon chat ?)" onChange={e => setQuestion(e.target.value)} required />
+              <input className="champ" placeholder="Réponse secrète" onChange={e => setReponse(e.target.value)} required />
+            </>
+          )}
+
+          <button className="bouton bouton-primaire" type="submit">
+            {estConnexion ? 'Se connecter' : "S'inscrire"}
+          </button>
+        </form>
+
+        <button className="bouton bouton-lien" onClick={() => setEstConnexion(!estConnexion)}>
+          {estConnexion ? "Pas de compte ? S'inscrire" : "Déjà inscrit ? Se connecter"}
+        </button>
+        
+        {estConnexion && (
+          <button className="bouton bouton-lien" onClick={() => setVueRecuperation(true)}>
+            Mot de passe oublié ?
+          </button>
+        )}
+        {message && <p className="texte-erreur">{message}</p>}
       </div>
+    </div>
+  )
+}
+
+function TableauDeBord() {
+  const [configure, setConfigure] = useState(false)
+  const [chargement, setChargement] = useState(true)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const verifierProfil = async () => {
+      const id = localStorage.getItem('userId')
+      if (!id) return navigate('/')
+
+      const res = await fetch(`http://localhost:5050/api/check-profile/${id}`)
+      const data = await res.json()
+      setConfigure(data.profileConfigured)
+      setChargement(false)
+    }
+    verifierProfil()
+  }, [navigate])
+
+  if (chargement) return <div>Chargement...</div>
+
+  return (
+    <div className="page-accueil">
+      <Navbar />
+      {!configure ? (
+        <Questionnaire onSave={() => setConfigure(true)} />
+      ) : (
+        <>
+          <Graphique />
+          <div className="two-col">
+            <AjoutConso />
+            <Historique />
+          </div>
+        </>
+      )}
     </div>
   )
 }
@@ -225,29 +145,23 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AuthForm />} />
-  <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Authentification />} />
+  <Route path="/accueil" element={<TableauDeBord />} />
   <Route path="/calendar" element={<Calendrier />} />
-        <Route path="/profile" element={<Profile />} />
+  <Route path="/profile" element={<Profil />} />
       </Routes>
     </Router>
   )
 }
 
-function Profile() {
+function Profil() {
   const navigate = useNavigate()
-  const userId = localStorage.getItem('userId')
-
-  useEffect(() => {
-    if (!userId) navigate('/')
-  }, [userId, navigate]) 
-
   return (
-    <div className="dashboard-page">
-        <Navbar />
+    <div className="page-accueil">
+      <Navbar />
       <div style={{ padding: 16 }}>
-        <h2>Profil</h2>
-        <Questionnaire onSave={() => navigate('/dashboard')} />
+        <h2>Mon Profil</h2>
+        <Questionnaire onSave={() => navigate('/tableau-de-bord')} />
       </div>
     </div>
   )
