@@ -20,7 +20,7 @@ export default function Historique() {
   const [consos, setConsos] = useState([])
   const [chargement, setChargement] = useState(true)
   const [erreur, setErreur] = useState(null)
-  const [dernierRetour, setDernierRetour] = useState(null)
+  
 // fct pour charger les consommations depuis le backend
   const chargerConsos = async () => {
     const userId = localStorage.getItem('userId')
@@ -30,17 +30,16 @@ export default function Historique() {
       return
     }
 
-    try {// on réinitialise l'erreur et le dernier retour à chaque chargement
+    try {
       setErreur(null)
       const res = await fetch(`http://localhost:5050/api/drinks/${userId}`)
-      const text = await res.text()
-      setDernierRetour(text)
-  // tab des conso récupérées depuis l'api
+      // tab des conso récupérées depuis l'api
       if (!res.ok) {
         setErreur(`HTTP ${res.status}`)
         setConsos([])
-      } else {// on parse les données et on met à jour le tableau des consommations
-        const data = JSON.parse(text || '{}')
+      } else {
+        // On utilise res.json() pour obtenir directement l'objet
+        const data = await res.json()
         setConsos(data.drinks || [])
       }
     } catch (err) {
@@ -66,11 +65,6 @@ export default function Historique() {
       <div className="texte-discret">{chargement ? 'Chargement...' : `${consos.length} consommations enregistrées`}</div>
       <div style={{ marginTop: 8 }}>
         {erreur && <div style={{ marginTop: 8, color: '#d23' }}>Erreur : {erreur}</div>}
-        {!erreur && dernierRetour && !chargement && (
-          <details style={{ marginTop: 8 }}>
-            <pre style={{ maxHeight: 200, overflow: 'auto', background: '#f7f7fb', padding: 8 }}>{dernierRetour}</pre>
-          </details>
-        )}
       </div>
       <div style={{ marginTop: '16px' }}>
         {consos.length === 0 && !chargement && (

@@ -117,8 +117,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Authentification />} />
   <Route path="/accueil" element={<TableauDeBord />} />
-  <Route path="/calendar" element={<Calendrier />} />
-  <Route path="/profile" element={<Profil />} />
+  <Route path="/calendrier" element={<Calendrier />} />
+  <Route path="/profil" element={<Profil />} />
       </Routes>
     </Router>
   )

@@ -46,17 +46,17 @@ export default function Calendrier() {
   return (
     <div className="page-tableau">
       <Navbar />
-      <div style={{ maxWidth: '800px', margin: '20px auto', padding: '0 16px' }}>
+  <div style={{ maxWidth: '700px', margin: '16px auto', padding: '0 12px' }}>
         
-        <div className="nav-calendrier" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-          <button onClick={() => setDateVue(new Date(annee, mois - 1, 1))}>‹</button>
-          <h2 style={{ textTransform: 'capitalize' }}>{labelMois}</h2>
-          <button onClick={() => setDateVue(new Date(annee, mois + 1, 1))}>›</button>
+        <div className="nav-calendrier" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, alignItems: 'center' }}>
+          <button onClick={() => setDateVue(new Date(annee, mois - 1, 1))} style={{ padding: '6px 10px' }}>‹</button>
+          <h2 style={{ textTransform: 'capitalize', fontSize: '1.1rem', margin: 0 }}>{labelMois}</h2>
+          <button onClick={() => setDateVue(new Date(annee, mois + 1, 1))} style={{ padding: '6px 10px' }}>›</button>
         </div>
 
-        <div className="grille-calendrier" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '5px' }}>
+        <div className="grille-calendrier" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
           {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(j => (
-            <div key={j} style={{ textAlign: 'center', fontWeight: 'bold' }}>{j}</div>
+            <div key={j} style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>{j}</div>
           ))}
           
           {Array(premierJourIndex).fill(null).map((_, i) => <div key={`vide-${i}`} />)}
@@ -73,10 +73,10 @@ export default function Calendrier() {
                 key={dateCle}
                 className={`case-jour ${infos ? 'active' : ''} ${estHaut ? 'danger' : ''}`}
                 onClick={() => setDateSelectionnee(dateCle)}
-                style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center', cursor: 'pointer' }}
+                style={{ border: '1px solid #ccc', padding: '6px', textAlign: 'center', cursor: 'pointer', minHeight: '48px' }}
               >
-                <strong>{jour}</strong>
-                {infos && <div style={{ fontSize: '0.8rem' }}>{infos.total}mg</div>}
+                <div style={{ fontSize: '0.95rem' }}><strong>{jour}</strong></div>
+                {infos && <div style={{ fontSize: '0.72rem', marginTop: 4 }}>{infos.total}mg</div>}
               </div>
             );
           })}

@@ -6,6 +6,7 @@ import {
 export default function Graphique({ sensibilite, demiVie: demiVieProp, hCoucher }) {
   const [drinks, setDrinks] = useState([]);
   const [demiVie, setDemiVie] = useState(5);
+  const [chargement, setChargement] = useState(true);
 
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export default function Graphique({ sensibilite, demiVie: demiVieProp, hCoucher 
         
         if (demiVieProp) setDemiVie(demiVieProp); 
       } catch (err) {
-        console.log("Erreur de chargement");
+        console.log("Erreur de chargement", err);
       } finally {
         setChargement(false);
       }
@@ -75,7 +76,7 @@ export default function Graphique({ sensibilite, demiVie: demiVieProp, hCoucher 
     <section className="carte">
       <h3>Évolution de la caféine</h3>
       <div style={{ width: '100%', height: 300 }}>
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="heure" />
