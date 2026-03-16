@@ -1,9 +1,7 @@
 # Caffeine Flow
 
-Prérequis
 - Node.js 
-- npm
-- MongoDB (local ou distant)
+- MongoDB 
 
 
 git clone https://github.com/d-hout/pII-caf-ine-flow.git
@@ -14,9 +12,10 @@ S'assurer que MongoDB est démarré et écoute sur le port 27017
 
 Lancer le back
 
-
 cd back
 npm install
+node app.js
+cd front
 npm run dev  
 
 
