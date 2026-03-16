@@ -15,9 +15,6 @@ Lancer le back
 cd back
 npm install
 node app.js
-cd front
-npm run dev  
-
 
 Lancer le front
 
