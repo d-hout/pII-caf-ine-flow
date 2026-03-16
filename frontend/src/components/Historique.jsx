@@ -21,7 +21,7 @@ export default function Historique() {
   const [chargement, setChargement] = useState(true)
   const [erreur, setErreur] = useState(null)
   const [dernierRetour, setDernierRetour] = useState(null)
-
+// fct pour charger les consommations depuis le backend
   const chargerConsos = async () => {
     const userId = localStorage.getItem('userId')
     if (!userId) {
@@ -30,16 +30,16 @@ export default function Historique() {
       return
     }
 
-    try {
+    try {// on réinitialise l'erreur et le dernier retour à chaque chargement
       setErreur(null)
       const res = await fetch(`http://localhost:5050/api/drinks/${userId}`)
       const text = await res.text()
       setDernierRetour(text)
-  // tableau des conso récupérées depuis l'API
+  // tab des conso récupérées depuis l'api
       if (!res.ok) {
         setErreur(`HTTP ${res.status}`)
         setConsos([])
-      } else {
+      } else {// on parse les données et on met à jour le tableau des consommations
         const data = JSON.parse(text || '{}')
         setConsos(data.drinks || [])
       }
@@ -60,7 +60,7 @@ export default function Historique() {
     return () => window.removeEventListener('drinks-updated', handler)
   }, [])
 
-  return (
+  return ( //affichage hitsorique du j 
     <aside className="carte-historique carte" style={{ width: '100%', minWidth: '350px' }}>
       <h3>Historique du jour</h3>
       <div className="texte-discret">{chargement ? 'Chargement...' : `${consos.length} consommations enregistrées`}</div>
@@ -79,9 +79,9 @@ export default function Historique() {
         {consos.map(d => (
           <ItemHistorique
             key={d._id}
-            title={d.name}
+            title={d.nomBoisson}
             time={new Date(d.date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-            mg={d.cafeineAmount}
+            mg={d.quantiteCafeine}
           />
         ))}
       </div>

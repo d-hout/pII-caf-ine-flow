@@ -20,7 +20,7 @@ export default function Calendrier() {
         
         //regroupe les consommations par jour et calcul du total quotidien
         const groupe = {};
-        (data.consommations || []).forEach(c => {
+        (data.drinks || []).forEach(c => {
           const jour = new Date(c.date).toISOString().slice(0, 10);
           if (!groupe[jour]) groupe[jour] = { items: [], total: 0 };
           groupe[jour].items.push(c);

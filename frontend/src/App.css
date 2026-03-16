@@ -365,4 +365,10 @@
 .barre-nav-centre .onglet.active { background: linear-gradient(90deg,#d2691e22,#8b451322); color:#3a231f; box-shadow: 0 6px 18px rgba(139,69,19,0.08) }
 
 
+.marge-haut-8 { margin-top: 8px }
+.marge-haut-12 { margin-top: 12px }
+.marge-haut-16 { margin-top: 16px }
+.marge-haut-30 { margin-top: 30px }
+
+
 

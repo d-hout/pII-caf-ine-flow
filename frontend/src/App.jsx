@@ -12,29 +12,25 @@ import Questionnaire from './components/Questionnaire'
 function Authentification() {
   const [email, setEmail] = useState('')
   const [motDePasse, setMotDePasse] = useState('')
-  const [question, setQuestion] = useState('')
-  const [reponse, setReponse] = useState('')
-  
   const [estConnexion, setEstConnexion] = useState(true)
   const [message, setMessage] = useState('')
-  const [vueRecuperation, setVueRecuperation] = useState(false)
+  
   const navigate = useNavigate()
 
   //inscription/connexion
   const gererSoumission = async (e) => {
     e.preventDefault()
     const url = estConnexion ? 'http://localhost:5050/api/login' : 'http://localhost:5050/api/register'
-    const corps = estConnexion
-      ? { email, password: motDePasse }
-      : { email, password: motDePasse, questionSecrete: question, reponseSecrete: reponse }
+    const corps = { email, password: motDePasse }
 
     try {
       const res = await fetch(url, {
-        method: 'POST',
+        method: 'POST', //
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corps)
       })
-      const data = await res.json()
+      const data = await res.json() // on parse la réponse du backend (transfo json en objet)
+  console.log('login response', res.status, data)
       
       if (res.ok) {
         // on stocke l'id attendu par le backend et par les autres composants
@@ -43,29 +39,9 @@ function Authentification() {
       } else {
         setMessage(data.message)
       }
-    } catch (err) { setMessage('Erreur serveur') }
+    } catch (err) { setMessage('Erreur serveur') } 
   }
 
-  const gererRecuperation = async (e) => {
-    if (e && e.preventDefault) e.preventDefault()
-    setMessage('à faire')
-    setTimeout(() => setMessage(''), 4500)
-    setVueRecuperation(false)
-  }
-
-  if (vueRecuperation) {
-    return (
-      <div className="conteneur-auth">
-        <div className="carte">
-          <h2>Récupération</h2>
-          <p>La réinitialisation de mot de passe est désactivée pour le moment. Vous pouvez contacter l'administrateur ou réessayer plus tard.</p>
-          <div style={{ marginTop: 12 }}>
-            <button className="bouton bouton-lien" onClick={() => setVueRecuperation(false)}>Retour</button>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="conteneur-auth">
@@ -74,29 +50,20 @@ function Authentification() {
         <h2>{estConnexion ? 'Connexion' : 'Inscription'}</h2>
         <form onSubmit={gererSoumission}>
           <input className="champ" type="email" placeholder="Email" onChange={e => setEmail(e.target.value)} required />
-          <input className="champ" type="password" placeholder="Mot de passe" onChange={e => setMotDePasse(e.target.value)} required />
+          <input className="champ" type="password" placeholder="Mot de passe" 
+          onChange={e => setMotDePasse(e.target.value)} required />
           
-          {!estConnexion && (
-            <>
-              <input className="champ" placeholder="Question secrète (ex: Nom de mon chat ?)" onChange={e => setQuestion(e.target.value)} required />
-              <input className="champ" placeholder="Réponse secrète" onChange={e => setReponse(e.target.value)} required />
-            </>
-          )}
 
           <button className="bouton bouton-primaire" type="submit">
             {estConnexion ? 'Se connecter' : "S'inscrire"}
           </button>
         </form>
 
-        <button className="bouton bouton-lien" onClick={() => setEstConnexion(!estConnexion)}>
+        <button className="bouton bouton-lien" 
+        onClick={() => setEstConnexion(!estConnexion)}>
           {estConnexion ? "Pas de compte ? S'inscrire" : "Déjà inscrit ? Se connecter"}
         </button>
         
-        {estConnexion && (
-          <button className="bouton bouton-lien" onClick={() => setVueRecuperation(true)}>
-            Mot de passe oublié ?
-          </button>
-        )}
         {message && <p className="texte-erreur">{message}</p>}
       </div>
     </div>
@@ -105,32 +72,35 @@ function Authentification() {
 
 function TableauDeBord() {
   const [configure, setConfigure] = useState(false)
+  const [demiVie, setDemiVie] = useState(null)
+  const [sensibilite, setSensibilite] = useState(null)
+  const [hCoucher, setHCoucher] = useState(null)
   const [chargement, setChargement] = useState(true)
-  const navigate = useNavigate()
+  const navigate = useNavigate() // hook de navigation pour rediriger l'utilisateur
 
   useEffect(() => {
     const verifierProfil = async () => {
       const id = localStorage.getItem('userId')
-      if (!id) return navigate('/')
+      if (!id) return navigate('/') // si pas d'id, rediriger vers la page de connexion
 
-      const res = await fetch(`http://localhost:5050/api/check-profile/${id}`)
-      const data = await res.json()
-      setConfigure(data.profileConfigured)
+  const res = await fetch(`http://localhost:5050/api/check-profile/${id}`)
+  const data = await res.json() // on vérifie si le profil de l'utilisateur est configuré pour savoir s'il doit remplir le questionnaire ou voir directement laccueil
+
+  setConfigure(data.profilConfigure)
       setChargement(false)
     }
     verifierProfil()
   }, [navigate])
 
-  if (chargement) return <div>Chargement...</div>
-
+  if (chargement) return <div>Chgt</div>
   return (
     <div className="page-accueil">
       <Navbar />
       {!configure ? (
-        <Questionnaire onSave={() => setConfigure(true)} />
+        <Questionnaire onSave={(obj) => { setConfigure(true); if (obj && typeof obj === 'object') { setDemiVie(obj.demiVie); setSensibilite(obj.sensibilite); setHCoucher(obj.hCoucher); } else { setDemiVie(obj); } }} />
       ) : (
         <>
-          <Graphique />
+          <Graphique demiVie={demiVie} sensibilite={sensibilite} hCoucher={hCoucher} />
           <div className="two-col">
             <AjoutConso />
             <Historique />
@@ -161,7 +131,7 @@ function Profil() {
       <Navbar />
       <div style={{ padding: 16 }}>
         <h2>Mon Profil</h2>
-        <Questionnaire onSave={() => navigate('/tableau-de-bord')} />
+        <Questionnaire onSave={() => navigate('/accueil')} />
       </div>
     </div>
   )

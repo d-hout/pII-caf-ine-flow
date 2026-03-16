@@ -10,10 +10,15 @@ export default function AjoutConso() {
   const optionsCafe = ['Espresso', 'Café filtre', 'Thé', 'Boisson énergisante']
 
   const ajouterConso = async () => {
-    const nomFinal = nom === 'Autre' ? nomLibre : nom;
+    let nomFinal = nom;
+    if (nom === 'Autre') {
+      nomFinal = nomLibre;
+    }
 
-    // Vérif pour avoir tous les champs complétés
-    if (!nomFinal || !quantite) return setMessage('Remplis tous les champs !')
+    // vérif pour avoir tous les champs complétés
+    if (!nomFinal || !quantite) {
+      return setMessage('Remplir tous les champs')
+    }
 
     try {
       const userId = localStorage.getItem('userId')
@@ -21,7 +26,7 @@ export default function AjoutConso() {
       const res = await fetch('http://localhost:5050/api/add-drink', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           userId: userId,
           name: nomFinal,
           cafeineAmount: Number(quantite)
@@ -32,9 +37,9 @@ export default function AjoutConso() {
 
       if (res.ok) {
         setMessage(data.message || 'Conso ajoutée')
-        setNom('')         
-        setNomLibre('')    
-        setQuantite('')    
+        setNom('')
+        setNomLibre('')
+        setQuantite('')
         window.dispatchEvent(new Event('drinks-updated'))
       } else {
         setMessage(data.message || 'Erreur serveur')
@@ -56,7 +61,7 @@ export default function AjoutConso() {
         style={{ marginBottom: 8, width: '100%' }}
       >
         <option value="">Choisir une boisson...</option>
-        {optionsCafe.map(o => (
+        {optionsCafe.map(o => ( //afficher tableau de composants 
           <option key={o} value={o}>{o}</option>
         ))}
         <option value="Autre">Autre (saisir manuellement)...</option>
