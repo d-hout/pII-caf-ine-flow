@@ -5,6 +5,7 @@
 
 
 git clone https://github.com/d-hout/pII-caf-ine-flow.git
+cd pII-caf-ine-flow
 cd P2I
 ```
 1 - Si vous avez Docker Desktop sur votre machine : tapez la commande suivante à la racine du projet  docker-compose up --build.
