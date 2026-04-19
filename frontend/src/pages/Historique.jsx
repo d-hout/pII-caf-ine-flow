@@ -139,12 +139,16 @@ export default function Historique() {
           {(() => {
             const totalMg = consos.reduce((acc, d) => acc + Number(d.quantiteCafeine || d.mg || 0), 0);
             const nbTasses = Math.round(totalMg / 80);
-            if (nbTasses > objectifTasses && !showPopup && !popupClosed) {
-              setTimeout(() => setShowPopup(true), 300);
-            }
             // Si on repasse sous l'objectif, on autorise à nouveau l'affichage de la popup
             if (nbTasses <= objectifTasses && popupClosed) {
               setTimeout(() => setPopupClosed(false), 300);
+            }
+            // À chaque nouveau dépassement, on réinitialise popupClosed pour permettre l'affichage de la popup
+            if (nbTasses > objectifTasses && !showPopup) {
+              setTimeout(() => {
+                setPopupClosed(false);
+                setShowPopup(true);
+              }, 300);
             }
             return consos.map(d => {
               const dt = new Date(d.date || d.createdAt)

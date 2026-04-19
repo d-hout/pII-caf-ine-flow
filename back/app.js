@@ -89,7 +89,7 @@ app.post('/api/update-profile', async (req, res) => {
 // récup boissons (catalogue)
 app.get('/api/boissons', async (req, res) => {
   try {
-    const boissons = await Boisson.find().sort({ type: 1, nom: 1 });
+    const boissons = await Boisson.find().sort({ type: 1, nom: 1 }); 
     res.json({ boissons });
   } catch (err) {
     console.error('Erreur /api/boissons:', err);
@@ -101,7 +101,7 @@ app.get('/api/boissons', async (req, res) => {
 app.post('/api/add-drink', async (req, res) => {
   try {
     console.log('/api/add-drink body:', req.body)
-    const idUtilisateur = req.body.idUtilisateur;
+    const idUtilisateur = req.body.idUtilisateur; 
     const idBoisson = req.body.idBoisson; 
     const nomBoisson = req.body.nomBoisson; 
     let quantiteCafeine = req.body.quantiteCafeine;
@@ -143,7 +143,7 @@ app.post('/api/request-password-reset', async (req, res) => {
 
     // Générer token et date d expiration(1 heure)
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = Date.now() + 3600 * 1000;
+    const expires = Date.now() + 3600 * 1000; // date actuelle + 1h tout ça en millisecondes
 
     user.resetToken = token;
     user.resetTokenExpires = new Date(expires);
@@ -168,7 +168,7 @@ app.post('/api/request-password-reset', async (req, res) => {
 // reset du mot de passe avec token
 app.post('/api/reset-password', async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { token, newPassword } = req.body; // on récupère le token et le nouveau mot de passe depuis le corps de la requete
     if (!token || !newPassword) return res.status(400).json({ message: 'Token et nouveau mot de passe requis' });
 
     const user = await Utilisateur.findOne({ resetToken: token, resetTokenExpires: { $gt: new Date() } });
@@ -211,12 +211,12 @@ app.get('/api/get-recommendations/:userId', async (req, res) => {
 
     // Heure de coucher
     if (user.hCoucher) {
-      const [heure, minute] = user.hCoucher.split(':').map(Number);
-      const heureNumeric = heure + minute / 60;
+      const [heure, minute] = user.hCoucher.split(':').map(Number);// coupe la chaine en deux partie puis convertit chaque parties en nombres , assigne h et minutes correspondantes
+      const heureNumeric = heure + minute / 60; // convertit h et miunutes en valeur decimale
       
       // Calculer l'heure limite (demi-vie * 2 pour que ça se dissipe ~95%)
       const demiVie = user.demiVie || 5;
-      const heureLimit = Math.max(14, 24 - (demiVie * 2));
+      const heureLimit = Math.max(14, 24 - (demiVie * 2)); // on recommande de ne pas consommer de caféine après 14h ou 2 fois la demi-vie avant le coucher, selon ce qui est le plus tôt
       
       recommendations.push({
         icon: '⏰',
@@ -273,7 +273,7 @@ app.get('/api/get-recommendations/:userId', async (req, res) => {
         icon: '⚠️',
         title: 'Tu es très sensible à la caféine',
         text: 'Préfère les cafés décaféinés après midi. Moins de 200mg par jour recommandé.',
-        priority: 'high'
+        priority: 'high' // servira a trier les conseils ou les afficher selon leur importance car dans le tableau recommendations chaque objet a une priorité
       });
     } else if (dv >= 6) {
       recommendations.push({
@@ -305,12 +305,12 @@ app.get('/api/get-habits/:userId', async (req, res) => {
 
     // Récupérer toutes les consommations de l'utilisateur (derniers 30 j)
     const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30); // date il y a 30j
 
     const consommations = await Consommation.find({
       idUtilisateur: userId,
       date: { $gte: thirtyDaysAgo }
-    }).sort({ date: -1 });
+    }).sort({ date: -1 }); // toutes les conso de lutilisateurs les 3à derniers j de la plus recente à la plus ancienne
 
     if (consommations.length === 0) {
       return res.json({
@@ -337,8 +337,8 @@ app.get('/api/get-habits/:userId', async (req, res) => {
 
     consommations.forEach(conso => {
       // Heure
-      const hour = new Date(conso.date).getHours();
-      hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+      const hour = new Date(conso.date).getHours();//. on recup l h 
+      hourCounts[hour] = (hourCounts[hour] || 0) + 1; // si c'est la premiere on initialise à 0 puis on ajoute 1 
 
       // Boisson
       const bevName = conso.nomBoisson || 'Inconnu';
@@ -349,8 +349,8 @@ app.get('/api/get-habits/:userId', async (req, res) => {
     });
 
     // Heure la plus fréquente
-    const mostFrequentHour = Object.keys(hourCounts).reduce((a, b) =>
-      hourCounts[a] > hourCounts[b] ? a : b
+    const mostFrequentHour = Object.keys(hourCounts).reduce((a, b) => 
+      hourCounts[a] > hourCounts[b] ? a : b // on compare les heures entre elles pour trouver celle qui a le plus de conso et on retourne cette heure
     );
 
     // Top 3 heures de consommation (pour les "pics")

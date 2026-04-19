@@ -425,7 +425,7 @@ return (
 				<div style={{ marginBottom: 10 }}>
 					<div style={{ color: '#065F46', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>✅ Vous pouvez consommer :</div>
 					<ul style={{ paddingLeft: 18, margin: 0 }}>
-						{safe.map(s => <li key={s.name} style={{ fontSize: 13, color: '#374151' }}>{s.name} ({s.projected} mg au coucher)</li>)}
+						 {safe.map(s => <li key={s.name} style={{ fontSize: 13, color: '#374151' }}>{s.name}</li>)}
 					</ul>
 				</div>
 			)}
@@ -435,7 +435,7 @@ return (
 				<div style={{ marginBottom: 10 }}>
 					<div style={{ color: '#92400E', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>⚠️ Avec modération :</div>
 					<ul style={{ paddingLeft: 18, margin: 0 }}>
-						{caution.map(s => <li key={s.name} style={{ fontSize: 13, color: '#374151' }}>{s.name} ({s.projected} mg au coucher)</li>)}
+						 {caution.map(s => <li key={s.name} style={{ fontSize: 13, color: '#374151' }}>{s.name}</li>)}
 					</ul>
 				</div>
 			)}
@@ -445,7 +445,7 @@ return (
 				<div>
 					<div style={{ color: '#991B1B', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>❌ À éviter :</div>
 					<ul style={{ paddingLeft: 18, margin: 0 }}>
-						{avoid.map(s => <li key={s.name} style={{ fontSize: 13, color: '#374151' }}>{s.name} ({s.projected} mg au coucher)</li>)}
+						 {avoid.map(s => <li key={s.name} style={{ fontSize: 13, color: '#374151' }}>{s.name}</li>)}
 					</ul>
 				</div>
 			)}
