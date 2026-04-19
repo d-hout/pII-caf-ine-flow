@@ -5,10 +5,10 @@ export default function Navbar() {
   const navigate = useNavigate() 
   
   const onglets = [ // on définit les onglets de navigation 
-    { key: 'accueil', label: 'Accueil', path: '/accueil' },
-    { key: 'calendrier', label: 'Calendrier', path: '/calendrier' },
-    { key: 'profil', label: 'Profil', path: '/profil' },
-    { key: 'cafes', label: "Cafés proches", path: '/cafes' }
+    { key: 'accueil', label: 'Accueil', path: '/accueil', icon: '🏠' },
+    { key: 'calendrier', label: 'Calendrier', path: '/calendrier', icon: '📅' },
+    { key: 'profil', label: 'Profil', path: '/profil', icon: '👤' },
+    { key: 'cafes', label: "Cafés proches", path: '/cafes', icon: '📍' }
   ]
 
   function handleDeconnexion() { // fct pour gérer la déconnexion on supprime l'id utilisateur du localStorage et on redirige vers la page de connexion
@@ -36,8 +36,9 @@ export default function Navbar() {
                 // chemin défini dans chaque onglet 
                 // pour la navigation
               >
-                {onglet.label}
-              </button>
+                  <span className="nav-emoji" aria-hidden style={{ marginRight: 8 }}>{onglet.icon}</span>
+                  {onglet.label}
+                </button>
             )
           })}
         </nav>

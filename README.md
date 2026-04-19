@@ -1,25 +1,44 @@
-# Caffeine Flow
+# ☕ Caffeine Flow
 
-- Node.js 
-- MongoDB 
+Application web de suivi de consommation de caféine. Visualisez en temps réel la caféine dans votre organisme, recevez des alertes personnalisées et améliorez votre sommeil.
 
+## Prérequis
 
+- [Node.js](https://nodejs.org/) (v18+)
+- npm
+- [MongoDB](https://www.mongodb.com/) (local ou distant, port 27017)
+
+## Installation
+
+```bash
 git clone https://github.com/d-hout/pII-caf-ine-flow.git
 cd pII-caf-ine-flow
-cd P2I
 ```
-1 - Si vous avez Docker Desktop sur votre machine : tapez la commande suivante à la racine du projet  docker-compose up --build.
-2 - Si vous possédez MongoDb Compass sur votre machine :
-il faut lancer Compass et cliquer sur "Connect" sur le l'URL qui s'affiche par défaut.
 
-Lancer le back
+## Lancer le back-end
 
+```bash
 cd back
 npm install
 node app.js
+```
 
-Lancer le front
+> Ou avec rechargement automatique : `npm run dev` (nécessite nodemon)
 
-cd frontend sur un autre terminal
+Le serveur démarre sur `http://localhost:5050`.
+
+## Lancer le front-end
+
+```bash
+cd frontend
 npm install
 npm run dev
+```
+
+L'application est accessible sur `http://localhost:5173`.
+
+## Stack technique
+
+- **Front-end** : React + Vite, Recharts, React-Leaflet, React-Calendar
+- **Back-end** : Node.js, Express, Mongoose
+- **Base de données** : MongoDB
